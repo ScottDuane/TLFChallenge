@@ -32,7 +32,6 @@ class RecurringEventsController < ApplicationController
       redirect_to @recurring_event
     else
       flash.now[:errors] = @recurring_event.errors.full_messages
-      puts "oh my errors: #{flash.now[:errors]}"
       render :edit
     end
   end

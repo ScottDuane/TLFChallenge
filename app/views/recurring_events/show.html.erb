@@ -1,7 +1,7 @@
 <h2><%= @recurring_event.name %></h2>
 
 <div class="event-info">
-  This event occurs every <%= @recurring_event.interval %> months.
+  This event occurs every <%= @recurring_event.interval %> months on the <%= @recurring_event.day_of_month %><%= @recurring_event.get_day_suffix %> of the month.
 </div>
 
 <div>

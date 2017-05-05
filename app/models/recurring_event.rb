@@ -29,6 +29,19 @@ class RecurringEvent < ActiveRecord::Base
     occurrences
   end
 
+  def get_day_suffix
+    case self.day_of_month % 10
+      when 1
+        return "st"
+      when 2
+        return "nd"
+      when 3
+        return "rd"
+      else
+        return "th"
+    end
+  end
+
   private
   def get_past_occurrences
     start_month = self.start_date.day < self.day_of_month ? self.start_date.month : self.start_date.month + 1
