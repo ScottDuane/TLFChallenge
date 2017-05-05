@@ -1,24 +1,19 @@
-# README
+# TrueLink Recurring Events
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a small CRUD app that allows users to view, create, update, and destroy recurring events. Notable features:
 
-Things you may want to cover:
+- Ensures that delivery dates are not holidays or Saturdays 
+- The root url redirects to an index of recurring events 
+- Each event links to a show page and an edit/destroy page  
+- Unit tests on the RecurringEvent model test that database and model level validations hold, as well as some of the basic scheduling functionality 
 
-* Ruby version
+Simplifying assumptions:
 
-* System dependencies
+- Users are currently allowed to pick start dates that are in the past or future
 
-* Configuration
+With more time I would:
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Style this app -- it's pretty darn ugly right now
+- Refactor the views using partials, in particular a `_form.html.erb`
+- Render errors directly onto the page 
+- Write additional tests, in particular integration tests using Capybara 
