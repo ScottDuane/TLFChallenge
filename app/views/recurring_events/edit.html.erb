@@ -29,16 +29,16 @@
 
   <label>
     Months between occurrences:
-    <input type="number" name="recurring_event[interval]" value="<%= @recurring_event.interval %>">
+    <input type="number" min=0 name="recurring_event[interval]" value="<%= @recurring_event.interval %>">
   </label>
 
   <hr />
 
-  <label>
+  <!-- <label>
     Buffer days:
     <input type="number" min=0 name="recurring_event[buffer]" value="<%= @recurring_event.buffer %>">
-  </label>
-  
+  </label> -->
+
   <hr />
 
   <input type="submit" name="" value="Update event">
