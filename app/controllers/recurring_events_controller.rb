@@ -9,7 +9,8 @@ class RecurringEventsController < ApplicationController
     if @recurring_event.save
       redirect_to :root
     else
-      flash.now[:errors].full_messages
+      flash.now[:errors] = @recurring_event.errors.full_messages
+      render :new
     end
   end
 
@@ -20,7 +21,7 @@ class RecurringEventsController < ApplicationController
     @recurring_event = RecurringEvent.find(params[:id])
   end
 
-  def edit 
+  def edit
   end
 
   def update

@@ -1,5 +1,8 @@
 class RecurringEvent < ActiveRecord::Base
   validates :name, :start_date, :interval, :day_of_month, presence: true
+  validate :day_of_month_is_valid
+  validate :interval_is_valid
+  validate :future_start_date
   # validates that buffer and interval are positive integers
   # validates that the date is today or in the future
 
@@ -106,5 +109,17 @@ class RecurringEvent < ActiveRecord::Base
     end
 
     date
+  end
+
+  def future_start_date
+    errors.add(:start_date, "Start date cannot be in the past") unless compare_dates(Date.today, self.start_date)
+  end
+
+  def interval_is_valid
+    errors.add(:interval, "There must be at least 1 month between occurrences.") unless self.interval > 0
+  end
+
+  def day_of_month_is_valid
+    errors.add(:day_of_month, "Invalid day of month.") unless self.day_of_month > 0 && self.day_of_month < 32
   end
 end
