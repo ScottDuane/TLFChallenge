@@ -5,6 +5,7 @@
       <% edit_url = '/recurring_events/' + event.id.to_s + '/edit' %>
       <li><%= link_to event.name, event %>
           <%= link_to "Edit or delete", edit_url %>
+          Next occurrence: <%= event.get_next_occurrences(1).first %> 
       </li>
     <% end %>
   </ul>
