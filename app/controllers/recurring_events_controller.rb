@@ -33,11 +33,14 @@ class RecurringEventsController < ApplicationController
     else
       flash.now[:errors] = @recurring_event.errors.full_messages
       puts "oh my errors: #{flash.now[:errors]}"
-      render :edit 
+      render :edit
     end
   end
 
   def destroy
+    @recurring_event = RecurringEvent.find(params[:id])
+    @recurring_event.destroy!
+    redirect_to :root
   end
 
   private

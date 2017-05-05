@@ -4,7 +4,7 @@
     <% @recurring_events.each do |event| %>
       <% edit_url = '/recurring_events/' + event.id.to_s + '/edit' %>
       <li><%= link_to event.name, event %>
-          <%= link_to "Edit event", edit_url %>
+          <%= link_to "Edit or delete", edit_url %>
       </li>
     <% end %>
   </ul>
