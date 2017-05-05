@@ -6,7 +6,6 @@ class RecurringEvent < ActiveRecord::Base
 
   def get_next_occurrences(n)
     today = Date.today
-    day = self.day_of_month
     occurrences = []
 
     if compare_dates(today, self.start_date)
@@ -18,23 +17,28 @@ class RecurringEvent < ActiveRecord::Base
       month = last_occurrence.month + self.interval
       year = last_occurrence.year
 
-      if month > 12
+      until month <= 12
         month -= 12
         year += 1
       end
     end
 
+    end_of_month = self.day_of_month > 28
+    day = end_of_month ? get_last_day_of_month(self.day_of_month, month) : self.day_of_month
+
+
     (1..n).each do |i|
-      day = get_last_day_of_month(day, month) if day > 28
       occurrence = Date.new(year, month, day)
       occurrence = get_actual_occurrence(occurrence) if is_holiday_or_weekend?(occurrence)
       occurrences << occurrence
       month += self.interval
 
-      if month > 12
+      until month <= 12
         month -= 12
         year += 1
       end
+
+      day = end_of_month ? get_last_day_of_month(day, month) : day
     end
 
     occurrences
@@ -61,7 +65,8 @@ class RecurringEvent < ActiveRecord::Base
     today = Date.today
     year = self.start_date.year
     month = start_month
-    day = self.day_of_month
+    end_of_month = self.day_of_month > 28
+    day = end_of_month ? get_last_day_of_month(self.day_of_month, month) : self.day_of_month
 
     occurrence = nil
     until compare_dates(today, occurrence)
@@ -69,10 +74,12 @@ class RecurringEvent < ActiveRecord::Base
       occurrences << occurrence
 
       month += self.interval
-      if month > 12
+      until month <= 12
         month -= 12
         year += 1
       end
+
+      day = end_of_month ? get_last_day_of_month(day, month) : day
     end
 
     occurrences.pop
@@ -89,7 +96,7 @@ class RecurringEvent < ActiveRecord::Base
       month += 1
     end
 
-    if month > 12
+    until month <= 12
       month -= 12
       year += 1
     end
@@ -147,13 +154,12 @@ class RecurringEvent < ActiveRecord::Base
                   6 => 30,
                   7 => 31,
                   8 => 31,
-                  9 => 31,
+                  9 => 30,
                   10 => 31,
-                  11 => 31,
+                  11 => 30,
                   12 => 31 }
-    if last_days[month] < day
-      return last_days[month]
-    end 
+
+    last_days[month]
   end
 
   def get_actual_occurrence(date)
@@ -163,8 +169,15 @@ class RecurringEvent < ActiveRecord::Base
 
     while is_holiday_or_weekend?(date)
       day = day - 1
-      month = day < 1 ? month - 1 : month
-      year = month < 1 ? year - 1 : year
+      if day < 1
+        month = month - 1
+        day = get_last_day_of_month(day, month)
+      end
+
+      if month < 1
+        year = year - 1
+      end
+
       date = Date.new(year, month, day)
     end
 

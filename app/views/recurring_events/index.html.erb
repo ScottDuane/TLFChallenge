@@ -3,9 +3,10 @@
   <ul>
     <% @recurring_events.each do |event| %>
       <% edit_url = '/recurring_events/' + event.id.to_s + '/edit' %>
-      <li><%= link_to event.name, event %>
-          <%= link_to "Edit or delete", edit_url %>
-          Next occurrence: <%= event.get_next_occurrences(1).first %> 
+      <li>
+        <div><b><%= link_to event.name, event %></b></div>
+        <div><%= link_to "Edit or delete", edit_url %></div>
+        <div>Next occurrence: <%= event.get_next_occurrences(1).first %></div>
       </li>
     <% end %>
   </ul>
