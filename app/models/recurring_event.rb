@@ -2,7 +2,7 @@ class RecurringEvent < ActiveRecord::Base
   validates :name, :start_date, :interval, :day_of_month, presence: true
   validate :day_of_month_is_valid
   validate :interval_is_valid
-  validate :future_start_date
+  # validate :future_start_date
   # validates that buffer and interval are positive integers
   # validates that the date is today or in the future
 

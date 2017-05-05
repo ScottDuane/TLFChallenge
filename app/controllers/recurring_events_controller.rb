@@ -22,9 +22,19 @@ class RecurringEventsController < ApplicationController
   end
 
   def edit
+    @recurring_event = RecurringEvent.find(params[:id])
   end
 
   def update
+    @recurring_event = RecurringEvent.find(params[:id])
+
+    if @recurring_event.update(event_params)
+      redirect_to @recurring_event
+    else
+      flash.now[:errors] = @recurring_event.errors.full_messages
+      puts "oh my errors: #{flash.now[:errors]}"
+      render :edit 
+    end
   end
 
   def destroy

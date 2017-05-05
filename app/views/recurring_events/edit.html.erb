@@ -1,14 +1,19 @@
+<% action_url = '/recurring_events/' + @recurring_event.id.to_s %>
+
 <h2>Edit this event</h2>
 
-<form class="event-form" action="/recurring_events" method="post">
+<form class="event-form" action="<%= action_url %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="_method" value="patch">
+  
   <label>
     Event name:
-    <input type="text" name="@recurring_event[name]" value="<%= @recurring_event.name %>">
+    <input type="text" name="recurring_event[name]" value="<%= @recurring_event.name %>">
   </label>
 
   <label>
     Start date:
-    <input type="date" name="@recurring_event[start_date]" value="<%= @recurring_event.start_date %>">
+    <input type="date" name="recurring_event[start_date]" value="<%= @recurring_event.start_date %>">
   </label>
 
   <label>
@@ -26,5 +31,5 @@
     <input type="number" min=0 name="recurring_event[buffer]" value="<%= @recurring_event.buffer %>">
   </label>
 
-  <input type="submit" name="" value="Save event">
+  <input type="submit" name="" value="Update event">
 </form>
