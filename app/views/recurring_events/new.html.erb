@@ -1,6 +1,8 @@
 <h2>Make a new event!</h2>
 
-<form class="event-form" action="/recurring_events" method="post">
+<form class="event-form" action="<%= recurring_events_url %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
   <label>
     Event name:
     <input type="text" name="recurring_event[name]" value="">
