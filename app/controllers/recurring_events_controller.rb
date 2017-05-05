@@ -16,6 +16,13 @@ class RecurringEventsController < ApplicationController
   def new
   end
 
+  def show
+    @recurring_event = RecurringEvent.find(params[:id])
+  end
+
+  def edit 
+  end
+
   def update
   end
 

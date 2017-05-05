@@ -1,0 +1,11 @@
+<h2><%= @recurring_event.name %></h2>
+
+<div>
+  The next four occurrences will be:
+  <ul>
+    <% occurrences = @recurring_event.get_next_occurrences(4) %>
+    <% occurrences.each do |occurrence| %>
+      <li><%= occurrence %></li>
+    <% end %>
+  </ul>
+</div>
