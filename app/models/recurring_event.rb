@@ -2,28 +2,38 @@ class RecurringEvent < ActiveRecord::Base
   validates :name, :start_date, :interval, :day_of_month, presence: true
   validate :day_of_month_is_valid
   validate :interval_is_valid
-  # validate :future_start_date
-  # validates that buffer and interval are positive integers
-  # validates that the date is today or in the future
+
 
   def get_next_occurrences(n)
     today = Date.today
-    last_occurrence = get_past_occurrences.last
-    occurrences = []
-    year = last_occurrence.year
-    month = last_occurrence.month
     day = self.day_of_month
+    occurrences = []
 
-    (1..n).each do |i|
-      month += self.interval
+    if compare_dates(today, self.start_date)
+      first_occurrence = get_first_occurrence
+      month = first_occurrence.month
+      year = first_occurrence.year
+    else
+      last_occurrence = get_past_occurrences.last
+      month = last_occurrence.month + self.interval
+      year = last_occurrence.year
+
       if month > 12
         month -= 12
         year += 1
       end
+    end
 
+    (1..n).each do |i|
       occurrence = Date.new(year, month, day)
       occurrence = get_actual_occurrence(occurrence) if is_holiday_or_weekend?(occurrence)
       occurrences << occurrence
+      month += self.interval
+
+      if month > 12
+        month -= 12
+        year += 1
+      end
     end
 
     occurrences
@@ -66,6 +76,24 @@ class RecurringEvent < ActiveRecord::Base
 
     occurrences.pop
     occurrences
+  end
+
+  def get_first_occurrence
+    year = self.start_date.year
+    month = self.start_date.month
+    day = self.day_of_month
+
+    today = Date.today
+    if today.day > day
+      month += 1
+    end
+
+    if month > 12
+      month -= 12
+      year += 1
+    end
+
+    Date.new(year, month, day)
   end
 
   def compare_dates(date1, date2)
