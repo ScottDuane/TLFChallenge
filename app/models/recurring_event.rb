@@ -129,10 +129,10 @@ class RecurringEvent < ActiveRecord::Base
   end
 
   def interval_is_valid
-    errors.add(:interval, "There must be at least 1 month between occurrences.") unless self.interval > 0
+    errors.add(:interval, "There must be at least 1 month between occurrences.") unless self.interval && self.interval > 0
   end
 
   def day_of_month_is_valid
-    errors.add(:day_of_month, "Invalid day of month.") unless self.day_of_month > 0 && self.day_of_month < 32
+    errors.add(:day_of_month, "Invalid day of month.") unless self.day_of_month && (self.day_of_month > 0 && self.day_of_month < 32)
   end
 end
