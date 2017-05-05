@@ -2,10 +2,10 @@
 
 This is a small CRUD app that allows users to view, create, update, and destroy recurring events. Notable features:
 
-- Ensures that delivery dates are not holidays or Saturdays 
-- The root url redirects to an index of recurring events 
+- Ensures that delivery dates are not holidays or Saturdays
+- The root url redirects to an index of recurring events
 - Each event links to a show page and an edit/destroy page  
-- Unit tests on the RecurringEvent model test that database and model level validations hold, as well as some of the basic scheduling functionality 
+- Unit tests on the RecurringEvent model test that database and model level validations hold, as well as some of the basic scheduling functionality
 
 Simplifying assumptions:
 
@@ -15,5 +15,6 @@ With more time I would:
 
 - Style this app -- it's pretty darn ugly right now
 - Refactor the views using partials, in particular a `_form.html.erb`
-- Render errors directly onto the page 
-- Write additional tests, in particular integration tests using Capybara 
+- Render errors directly onto the page
+- Add in buffer days bonus 
+- Write additional tests, in particular integration tests using Capybara
