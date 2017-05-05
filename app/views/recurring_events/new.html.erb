@@ -1,0 +1,30 @@
+<h2>Make a new event!</h2>
+
+<form class="event-form" action="/recurring_events" method="post">
+  <label>
+    Event name:
+    <input type="text" name="recurring_event[name]" value="">
+  </label>
+  <hr />
+  <label>
+    Start date:
+    <input type="date" name="recurring_event[start_date]" value="">
+  </label>
+  <hr />
+  <label>
+    Day of month:
+    <input type="number" min=1 max=31 name="recurring_event[day_of_month]" value="">
+  </label>
+  <hr />
+  <label>
+    Months between occurrences:
+    <input type="number" name="recurring_event[interval]" value="">
+  </label>
+  <hr />
+  <label>
+    Buffer days:
+    <input type="number" min=0 name="recurring_event[buffer]" value="">
+  </label>
+  <hr />
+  <input type="submit" name="" value="Save event">
+</form>

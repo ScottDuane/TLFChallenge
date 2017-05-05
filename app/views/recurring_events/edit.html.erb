@@ -1,0 +1,30 @@
+<h2>Edit this event</h2>
+
+<form class="event-form" action="/recurring_events" method="post">
+  <label>
+    Event name:
+    <input type="text" name="@recurring_event[name]" value="<%= @recurring_event.name %>">
+  </label>
+
+  <label>
+    Start date:
+    <input type="date" name="@recurring_event[start_date]" value="<%= @recurring_event.start_date %>">
+  </label>
+
+  <label>
+    Day of month:
+    <input type="number" min=1 max=31 name="recurring_event[day_of_month]" value="<%= @recurring_event.day_of_month %>">
+  </label>
+
+  <label>
+    Months between occurrences:
+    <input type="number" name="recurring_event[interval]" value="<%= @recurring_event.interval %>">
+  </label>
+
+  <label>
+    Buffer days:
+    <input type="number" min=0 name="recurring_event[buffer]" value="<%= @recurring_event.buffer %>">
+  </label>
+
+  <input type="submit" name="" value="Save event">
+</form>
