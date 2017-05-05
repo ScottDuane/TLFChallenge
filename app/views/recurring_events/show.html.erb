@@ -1,5 +1,9 @@
 <h2><%= @recurring_event.name %></h2>
 
+<div class="event-info">
+  This event occurs every <%= @recurring_event.interval %> months.
+</div>
+
 <div>
   The next four occurrences will be:
   <ul>
