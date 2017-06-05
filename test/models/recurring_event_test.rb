@@ -28,20 +28,22 @@ class RecurringEventTest < ActiveSupport::TestCase
   end
 
   test "should start delivery in the current month when possible" do
-    event_start = Date.new(2017, 5, 10)
-    event = RecurringEvent.new(name: "May the fourth be with you", start_date: event_start, interval: 2, day_of_month: 24)
+    event_start = Date.new(2018, 2, 1)
+
+    event = RecurringEvent.new(name: "May the fourth be with you", start_date: event_start, interval: 2, day_of_month: 2)
     event.save!
-    expected_date = Date.new(2017, 5, 24)
-    actual_date = event.get_next_occurrences(1).first
+    expected_date = Date.new(2018, 2, 2)
+    actual_date = event.get_first_occurrence
     assert_equal(expected_date, actual_date)
   end
 
   test "should skip to next month if this month's delivery date has passed" do
-    event_start = Date.new(2017, 5, 10)
+    event_start = Date.new(2017, 5, 24)
+
     event = RecurringEvent.new(name: "May the fourth NOT be with you", start_date: event_start, interval: 3, day_of_month: 2)
     event.save!
     expected_date = Date.new(2017, 6, 2)
-    actual_date = event.get_next_occurrences(1).first
+    actual_date = event.get_first_occurrence
     assert_equal(expected_date, actual_date)
   end
 
@@ -60,7 +62,22 @@ class RecurringEventTest < ActiveSupport::TestCase
     event = RecurringEvent.new(name: "Glorious patriotism", start_date: event_start, interval: 1, day_of_month: 4)
     event.save!
     delivery_date = event.get_next_occurrences(1).first
-    assert_not delivery_date.day == 4 
+    assert_not delivery_date.day == 4
   end
 
+  test "event start date on Nov 2 with day of month 3 behaves correctly" do
+    event_start = Date.new(2017, 11, 2)
+    event = RecurringEvent.new(name: "Test November", start_date: event_start, interval: 1, day_of_month: 3)
+    event.save!
+    expected_start = Date.new(2017, 11, 3)
+    actual_start = event.get_first_occurrence
+    assert_equal(expected_start, actual_start)
+
+    next_occurrences = event.get_next_occurrences(3)
+    december_occurrence = Date.new(2017, 12, 1)
+    january_occurrence = Date.new(2018, 1, 3)
+    assert_equal(expected_start, next_occurrences[0])
+    assert_equal(december_occurrence, next_occurrences[1])
+    assert_equal(january_occurrence, next_occurrences[2])
+  end
 end

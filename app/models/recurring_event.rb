@@ -3,29 +3,29 @@ class RecurringEvent < ActiveRecord::Base
   validate :day_of_month_is_valid
   validate :interval_is_valid
 
+  LAST_DAYS = { 1 => 31,
+                2 => 28,
+                3 => 31,
+                4 => 30,
+                5 => 31,
+                6 => 30,
+                7 => 31,
+                8 => 31,
+                9 => 30,
+                10 => 31,
+                11 => 30,
+                12 => 31 }
 
   def get_next_occurrences(n)
     today = Date.today
     occurrences = []
 
-    if compare_dates(today, self.start_date)
-      first_occurrence = get_first_occurrence
-      month = first_occurrence.month
-      year = first_occurrence.year
-    else
-      last_occurrence = get_past_occurrences.last
-      month = last_occurrence.month + self.interval
-      year = last_occurrence.year
-
-      until month <= 12
-        month -= 12
-        year += 1
-      end
-    end
+    month_year_data = is_first_date_less_than_second(today, self.start_date) ? get_next_for_future_starts : get_next_for_past_starts
+    month = month_year_data[0]
+    year = month_year_data[1]
 
     end_of_month = self.day_of_month > 28
-    day = end_of_month ? get_last_day_of_month(self.day_of_month, month) : self.day_of_month
-
+    day = end_of_month ? LAST_DAYS[month] : self.day_of_month
 
     (1..n).each do |i|
       occurrence = Date.new(year, month, day)
@@ -38,11 +38,32 @@ class RecurringEvent < ActiveRecord::Base
         year += 1
       end
 
-      day = end_of_month ? get_last_day_of_month(day, month) : day
+      day = end_of_month ? LAST_DAYS(day, month) : day
     end
 
     occurrences
   end
+
+  def get_next_for_future_starts
+    first_occurrence = get_first_occurrence
+    month = first_occurrence.month
+    year = first_occurrence.year
+    [month, year]
+  end
+
+  def get_next_for_past_starts
+    last_occurrence = get_past_occurrences.last
+    month = last_occurrence.month + self.interval
+    year = last_occurrence.year
+
+    until month <= 12
+      month -= 12
+      year += 1
+    end
+
+    [month, year]
+  end
+
 
   def get_day_suffix
     case self.day_of_month % 10
@@ -57,19 +78,14 @@ class RecurringEvent < ActiveRecord::Base
     end
   end
 
-  private
   def get_past_occurrences
-    start_month = self.start_date.day < self.day_of_month ? self.start_date.month : self.start_date.month + 1
-
     occurrences = []
-    today = Date.today
-    year = self.start_date.year
-    month = start_month
     end_of_month = self.day_of_month > 28
-    day = end_of_month ? get_last_day_of_month(self.day_of_month, month) : self.day_of_month
+    today = Date.today
 
-    occurrence = nil
-    until compare_dates(today, occurrence)
+    occurrence = get_first_occurrence
+    year, month, day = occurrence.year, occurrence.month, occurrence.day
+    until is_first_date_less_than_second(today, occurrence)
       occurrence = Date.new(year, month, day)
       occurrences << occurrence
 
@@ -79,7 +95,7 @@ class RecurringEvent < ActiveRecord::Base
         year += 1
       end
 
-      day = end_of_month ? get_last_day_of_month(day, month) : day
+      day = end_of_month ? LAST_DAYS[month] : day
     end
 
     occurrences.pop
@@ -91,8 +107,7 @@ class RecurringEvent < ActiveRecord::Base
     month = self.start_date.month
     day = self.day_of_month
 
-    today = Date.today
-    if today.day > day
+    if self.start_date.day > day
       month += 1
     end
 
@@ -104,19 +119,9 @@ class RecurringEvent < ActiveRecord::Base
     Date.new(year, month, day)
   end
 
-  def compare_dates(date1, date2)
+  def is_first_date_less_than_second(date1, date2)
     return false unless date1 && date2
-
-    return true if date1.year < date2.year
-    return false if date2.year < date1.year
-
-    return true if date1.month < date2.month
-    return false if date2.month < date1.month
-
-    return true if date1.day < date2.day
-    return false if date2.day < date1.day
-
-    true
+    date1 < date2
   end
 
   def is_holiday_or_weekend?(date)
@@ -145,22 +150,22 @@ class RecurringEvent < ActiveRecord::Base
     end
   end
 
-  def get_last_day_of_month(day, month)
-    last_days = { 1 => 31,
-                  2 => 28,
-                  3 => 31,
-                  4 => 30,
-                  5 => 31,
-                  6 => 30,
-                  7 => 31,
-                  8 => 31,
-                  9 => 30,
-                  10 => 31,
-                  11 => 30,
-                  12 => 31 }
-
-    last_days[month]
-  end
+  # def get_last_day_of_month(day, month)
+  #   last_days = { 1 => 31,
+  #                 2 => 28,
+  #                 3 => 31,
+  #                 4 => 30,
+  #                 5 => 31,
+  #                 6 => 30,
+  #                 7 => 31,
+  #                 8 => 31,
+  #                 9 => 30,
+  #                 10 => 31,
+  #                 11 => 30,
+  #                 12 => 31 }
+  #
+  #   last_days[month]
+  # end
 
   def get_actual_occurrence(date)
     year = date.year
@@ -171,7 +176,7 @@ class RecurringEvent < ActiveRecord::Base
       day = day - 1
       if day < 1
         month = month - 1
-        day = get_last_day_of_month(day, month)
+        day = LAST_DAYS[month]
       end
 
       if month < 1
@@ -185,7 +190,7 @@ class RecurringEvent < ActiveRecord::Base
   end
 
   def future_start_date
-    errors.add(:start_date, "Start date cannot be in the past") unless compare_dates(Date.today, self.start_date)
+    errors.add(:start_date, "Start date cannot be in the past") unless is_first_date_less_than_second(Date.today, self.start_date)
   end
 
   def interval_is_valid
