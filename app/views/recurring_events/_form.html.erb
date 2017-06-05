@@ -1,0 +1,44 @@
+<% button_text = action_type == :new ? "Create event!" : "Update event" %>
+<% action_url = action_type == :new ? recurring_events_url : recurring_event_url(recurring_event) %>
+
+<form class="event-form" action="<%= action_url %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="_method" value="patch">
+
+  <label>
+    Event name:
+    <input type="text" name="recurring_event[name]" value="<%= recurring_event.name %>">
+  </label>
+
+  <hr />
+
+  <label>
+    Start date:
+    <input type="date" name="recurring_event[start_date]" value="<%= recurring_event.start_date %>">
+  </label>
+
+  <hr />
+
+  <label>
+    Day of month:
+    <input type="number" min=1 max=31 name="recurring_event[day_of_month]" value="<%= recurring_event.day_of_month %>">
+  </label>
+
+  <hr />
+
+  <label>
+    Months between occurrences:
+    <input type="number" min=0 name="recurring_event[interval]" value="<%= recurring_event.interval %>">
+  </label>
+
+  <hr />
+
+  <!-- <label>
+    Buffer days:
+    <input type="number" min=0 name="recurring_event[buffer]" value="<%= @recurring_event.buffer %>">
+  </label> -->
+
+  <hr />
+
+  <input type="submit" name="" value="<%= button_text %>">
+</form>
